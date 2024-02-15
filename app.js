@@ -8,7 +8,7 @@ app.use(cors());
 ObjectId = mongoose.Types.ObjectId;
 
 const userRoute = require('./routes/user');
-app.use('/heath',(req,res)=>{return res.send('ok');})
+app.get('/health',(req,res)=>{return res.send('ok');})
 app.use('/user', userRoute);
 
 app.listen(process.env.PORT || 5000,async (err) => {
