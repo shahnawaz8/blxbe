@@ -14,6 +14,8 @@ router.post("/connectWithWallet",userController.connectWithWallet);
 
 router.get("/getUserDetails",jwtAuth.authenticateToken,userController.getUserDetails);
 
+router.patch("/updateProfile",jwtAuth.authenticateToken,userController.updateUser);
+
 router.post('/upload-image',upload.single('image'),userController.uploadImage);
 
 module.exports = router;
