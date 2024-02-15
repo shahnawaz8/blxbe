@@ -33,7 +33,8 @@ function authenticateToken(req, res, next) {
         let decodedArray = user.payload.split(" ");
         let userWalletAddress = decodedArray[0];
         let userData = await User.findOne({ userWalletAddress }).lean();
-        req.userData = userData
+        req.userData = userData;
+        req.userWalletAddress = userData.userWalletAddress;
         next();
     });
 };

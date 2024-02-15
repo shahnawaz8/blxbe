@@ -3,9 +3,10 @@ const bcrypt = require("bcrypt");
 const jwtAuth = require('../auth/jwtAuth');
 exports.connectWithWallet = async (req, res) => {
     try {
-        let { userWalletAddress } = req.body;
+        let userWalletAddress = req.headers.userwalletaddress;
+        console.log(userWalletAddress, req.headers)
         if (userWalletAddress == undefined) {
-            return res.json(Response.parse(false, 'userWalletAddress is a mandatory field'));
+            return res.json({ success: false, message: 'userWalletAddress is a mandatory field' });
         }
         let user = await User.findOne({ userWalletAddress }).lean();;
 
@@ -37,10 +38,43 @@ exports.connectWithWallet = async (req, res) => {
         if (user.description) resp.description = user.description;
         resp.authToken = token;
         resp.authTokenExpireIn = expiresIn
-        return res.status(200).json({ success: false, data: resp })
+        return res.status(200).json({ success: true, data: resp })
+    } catch (error) {
+        console.log(error);
+        return res.json({ success: false, message: "Something went wrong" });
+    }
+}
+
+exports.getUserDetails = async (req, res) => {
+    try {
+        let { userWalletAddress } = req;
+
+        let user = await User.findOne({ userWalletAddress }).lean();;
+        if (user) {
+            return res.json({ success: true, data: user })
+        }
+        return res.json({ success: false, message: 'user not found' })
+    } catch (error) {
+        console.log(error);
+        return res.json({ success: false, message: "Something went wrong" });
+    }
+}
+
+exports.updateUser = async (req, res) => {
+    try {
+        let { userWalletAddress } = req;
+        let {name, profileUrl, description } = req.body;
+
+        let updateObj ={}
+        if(name) updateObj.name = name;
+        if(profileUrl) updateObj.profileUrl = profileUrl;
+        if(description) updateObj.description = description;
+        if(!Object.keys(updateObj).length) return res.json({ success: true, message: 'Please select at least one field' });
+        let user = await User.findOneAndUpdate({ userWalletAddress: userWalletAddress}, {$set: updateObj}).lean();;
+        
+        return res.json({ success: true, message: 'user profile updated' })
     } catch (error) {
         console.log(error);
         return res.json({ success: true, message: "Something went wrong" });
     }
 }
-
