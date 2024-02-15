@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwtAuth = require('../auth/jwtAuth');
+const UploadService = require('../services/upload')
 exports.connectWithWallet = async (req, res) => {
     try {
         let userWalletAddress = req.body.userwalletaddress;
@@ -76,5 +77,19 @@ exports.updateUser = async (req, res) => {
     } catch (error) {
         console.log(error);
         return res.json({ success: true, message: "Something went wrong" });
+    }
+}
+
+exports.uploadImage = async (req, res) => {
+    try {
+        const file = req.file;
+        await UploadService.uploadFile(file, (err, data) => {
+            if (err) return res.send({ success: false, message: 'upload failed' });
+            return res.send({ success: true, data: data });
+        });
+    } catch (error) {
+        console.log(error)
+        return res.send({ success: false, message: 'error getting link' });
+
     }
 }
