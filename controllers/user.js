@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const jwtAuth = require('../auth/jwtAuth');
 exports.connectWithWallet = async (req, res) => {
     try {
-        let userWalletAddress = req.headers.userwalletaddress;
+        let userWalletAddress = req.body.userwalletaddress;
         console.log(userWalletAddress, req.headers)
         if (userWalletAddress == undefined) {
             return res.json({ success: false, message: 'userWalletAddress is a mandatory field' });
